@@ -1,3 +1,31 @@
+# 🌈✨ Bem-vindes ao API Gateway MAIS FABULOSO da Internet! ✨🌈
+
+![diva](diva.webp)
+
+💖 Se joga nessa aventura tecnológica cheia de REST, SOAP e muita integração! Aqui, temos um API Gateway chiquérrimo que conecta tudo com muito glamour! 💃🎉
+
+🎭 O que temos por aqui?
+
+💅 API Gateway divando com Node.js
+
+💖 API REST poderosa rodando no Django
+
+💃 API SOAP glamourosa via WCF
+
+🌟 HATEOAS trazendo links porque amamos conexão!
+
+🎀 Documentação via Swagger pra ficar tudo clarinho!
+
+🎩 Como instalar esse espetáculo?
+
+Clone o repositório: git clone https://github.com/rest-soap.git
+
+Entre na pasta: cd api-gateway-fabuloso
+
+Instale as dependências: npm install
+
+Dê o start no show: npm start
+
 Agora vamos garantir que você consiga rodar o sistema completo sem nenhum perrengue! Aqui estão as instruções de ouro para deixar tudo funcionando com muito brilho! ✨💖
 
 ---
