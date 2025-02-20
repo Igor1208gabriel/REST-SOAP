@@ -10,24 +10,24 @@ var builder = WebApplication.CreateBuilder(args);
 // Adicionando serviços SOAP ao container
 builder.Services.AddSoapCore();
 builder.Services.AddSingleton<IService, Service>();
-builder.Services.AddControllers(); // Se houver APIs REST
+builder.Services.AddControllers(); // Para APIs REST, caso necessário
 
 var app = builder.Build();
 
-// Configurar pipeline de requisição HTTP
+// Configuração do pipeline de requisição HTTP
 if (app.Environment.IsDevelopment())
 {
-    _ = app.UseDeveloperExceptionPage();
+    app.UseDeveloperExceptionPage();
 }
 
 app.UseRouting();
 
-// 🔹 UseSoapEndpoint deve ser chamado diretamente no app
+// Configurando o endpoint SOAP
 app.UseSoapEndpoint<IService>("/Service.svc", new SoapEncoderOptions());
 
 app.UseEndpoints(endpoints =>
 {
-    _ = endpoints.MapControllers(); // Para suporte a APIs REST
+    endpoints.MapControllers(); // Para suporte a APIs REST
 });
 
 app.Run();
