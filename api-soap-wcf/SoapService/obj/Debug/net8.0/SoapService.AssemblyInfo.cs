@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("SoapService")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ed0c0fbeee829397999d559477b1a79f5eec8d4b")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+3e3e8bd18dee85ec187bb8a5f3df2040ef3af5c6")]
 [assembly: System.Reflection.AssemblyProductAttribute("SoapService")]
 [assembly: System.Reflection.AssemblyTitleAttribute("SoapService")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
