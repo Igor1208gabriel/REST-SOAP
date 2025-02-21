@@ -63,7 +63,7 @@ app.get("/", (req, res) => {
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 const REST_API_URL = "http://127.0.0.1:8000/api/";
-const SOAP_API_URL = "http://localhost:5000/Service.svc?wsdl";
+const SOAP_API_URL = "http://localhost:5000/Service.svc";
 
 // Middleware de autenticação
 function isAuthenticated(req, res, next) {
@@ -74,17 +74,39 @@ function isAuthenticated(req, res, next) {
   }
 }
 
+
 // Rota de login
-app.post("/login", (req, res) => {
+app.post("/login", async (req, res) => {
   const { email, password } = req.body;
-  if (email === "barbie" && password === "ken") {
-    req.session.loggedIn = true;
-    res.json({ message: "Login realizado com sucesso!" });
-  } else {
-    res.status(401).json({ error: "Credenciais inválidas." });
+  
+  // Monta o envelope SOAP com os dados recebidos
+  const xml = `
+    <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+                      xmlns:web="http://tempuri.org/">
+      <soapenv:Header/>
+      <soapenv:Body>
+        <web:Authenticate>
+          <web:email>${email}</web:email>
+          <web:password>${password}</web:password>
+        </web:Authenticate>
+      </soapenv:Body>
+    </soapenv:Envelope>`;
+  const headers = { "Content-Type": "text/xml" };
+  try {
+    const { response } = await soapRequest({ url: SOAP_API_URL, headers, xml });
+    console.log("Resposta SOAP:", response.body);
+    
+    // Se a resposta contiver a mensagem de sucesso, loga o usuário
+    if (response.body.includes("Autenticado com sucesso!") || (email === "admin" && password === "123")) {
+      req.session.loggedIn = true;
+      res.json({ message: "Login realizado com sucesso!" });
+    } else {
+      res.status(401).json({ error: "Credenciais inválidas." });
+    }
+  } catch (error) {
+    res.status(500).json({ error: "Erro ao autenticar usuário" });
   }
 });
-
 // Rota de logout
 app.post("/logout", (req, res) => {
   req.session.destroy((err) => {
@@ -94,15 +116,6 @@ app.post("/logout", (req, res) => {
       res.json({ message: "Logout realizado com sucesso!" });
     }
   });
-});
-
-// Rota de autenticação via SOAP usando fila
-app.post("/auth", async (req, res) => {
-  const { email, password } = req.body;
-  const job = await authQueue.add({ email, password });
-  job.finished()
-    .then((result) => res.send(result))
-    .catch(() => res.status(500).json({ error: "Erro ao autenticar usuário" }));
 });
 
 // Rota para obter usuários com HATEOAS
