@@ -1,0 +1,23 @@
+version: "3.8"
+
+services:
+  rest-api:
+    build: ./api-rest
+    ports:
+      - "8000:8000"
+    container_name: rest-api
+    depends_on:
+      - soap-service
+      - api-gateway
+
+  soap-service:
+    build: ./api-soap-wcf/SoapService
+    ports:
+      - "5000:5000"
+    container_name: soap-service
+
+  api-gateway:
+    build: ./api-gateway
+    ports:
+      - "3000:3000"
+    container_name: api-gateway
