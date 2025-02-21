@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Home - API Gateway</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f2f5;
+      margin: 0;
+      padding: 0;
+    }
+    .header {
+      background-color: #4CAF50;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+      position: relative;
+    }
+    .logout-button {
+      background-color: #f44336;
+      border: none;
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      cursor: pointer;
+      position: absolute;
+      right: 1rem;
+      top: 1rem;
+    }
+    .logout-button:hover {
+      background-color: #d32f2f;
+    }
+    .container {
+      padding: 2rem;
+    }
+    .cards-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: center;
+    }
+    .card {
+      background-color: #fff;
+      border-radius: 4px;
+      padding: 0.5rem 1rem;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+      text-decoration: none;
+      color: #333;
+      min-width: 100px;
+      text-align: center;
+      font-size: 14px;
+    }
+    .card:hover {
+      background-color: #f9f9f9;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h2>Home</h2>
+    <button class="logout-button" onclick="logout()">Logout</button>
+  </div>
+  <div class="container">
+    <div class="cards-container" id="usersContainer">
+      <!-- Os cards (apenas com o nome do usuário) serão inseridos aqui -->
+    </div>
+  </div>
+  <script>
+    async function fetchUsers() {
+      try {
+        const response = await fetch("http://localhost:3000/users", {
+          credentials: 'include'
+        });
+        if (response.ok) {
+          const users = await response.json();
+          const container = document.getElementById("usersContainer");
+          container.innerHTML = "";
+          users.forEach(user => {
+            // Cada card é um link para o detalhamento do usuário
+            const link = document.createElement("a");
+            link.href = `user-detail.html?id=${user.id}`;
+            link.className = "card";
+            link.innerText = user.name;
+            container.appendChild(link);
+          });
+        } else {
+          document.getElementById("usersContainer").innerText = "Erro ao carregar usuários.";
+        }
+      } catch (error) {
+        document.getElementById("usersContainer").innerText = "Erro de conexão.";
+      }
+    }
+
+    async function logout() {
+      try {
+        const response = await fetch("http://localhost:3000/logout", {
+          method: "POST",
+          credentials: 'include'
+        });
+        if (response.ok) {
+          window.location.href = "login.html";
+        }
+      } catch (error) {
+        alert("Erro ao realizar logout.");
+      }
+    }
+
+    // Carrega os usuários quando a página é carregada
+    fetchUsers();
+  </script>
+</body>
+</html>

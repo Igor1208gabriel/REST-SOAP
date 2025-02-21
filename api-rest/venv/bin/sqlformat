@@ -1,5 +1,5 @@
 #!/bin/sh
-'''exec' "/home/igor/Desktop/vscode/DSD/SOAP REST/api-rest/venv/bin/python3" "$0" "$@"
+'''exec' "/home/igo/Área de trabalho/REST-SOAP/api-rest/venv/bin/python3" "$0" "$@"
 ' '''
 # -*- coding: utf-8 -*-
 import re

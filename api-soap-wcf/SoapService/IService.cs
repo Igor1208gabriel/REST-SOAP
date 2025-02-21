@@ -1,8 +1,9 @@
 using System.ServiceModel;
+using System.Threading.Tasks;
 
 [ServiceContract]
 public interface IService
 {
     [OperationContract]
-    string Authenticate(string username, string password);
+    Task<string> Authenticate(string username, string password);
 }

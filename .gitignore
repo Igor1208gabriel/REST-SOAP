@@ -1,0 +1,39 @@
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+.env
+
+# Logs
+logs/
+*.log
+
+# Diretórios de build/output
+dist/
+build/
+
+# Python / Django
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+db.sqlite3
+*.env
+venv/
+ENV/
+env/
+
+# .NET / Visual Studio
+**/bin/
+**/obj/
+*.user
+*.suo
+*.sln.docstates
+*.csproj.user
+*.csprojAssemblyReference.cache
+
+# Arquivos específicos de sistema
+.DS_Store
+Thumbs.db

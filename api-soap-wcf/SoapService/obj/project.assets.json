@@ -5131,19 +5131,19 @@
     ]
   },
   "packageFolders": {
-    "/home/igor/.nuget/packages/": {}
+    "/home/igo/.nuget/packages/": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/home/igor/Desktop/vscode/DSD/SOAP REST/api-soap-wcf/SoapService/SoapService.csproj",
+      "projectUniqueName": "/home/igo/Área de trabalho/REST-SOAP/api-soap-wcf/SoapService/SoapService.csproj",
       "projectName": "SoapService",
-      "projectPath": "/home/igor/Desktop/vscode/DSD/SOAP REST/api-soap-wcf/SoapService/SoapService.csproj",
-      "packagesPath": "/home/igor/.nuget/packages/",
-      "outputPath": "/home/igor/Desktop/vscode/DSD/SOAP REST/api-soap-wcf/SoapService/obj/",
+      "projectPath": "/home/igo/Área de trabalho/REST-SOAP/api-soap-wcf/SoapService/SoapService.csproj",
+      "packagesPath": "/home/igo/.nuget/packages/",
+      "outputPath": "/home/igo/Área de trabalho/REST-SOAP/api-soap-wcf/SoapService/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "/home/igor/.nuget/NuGet/NuGet.Config"
+        "/home/igo/.nuget/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net8.0"
@@ -5161,11 +5161,6 @@
         "warnAsError": [
           "NU1605"
         ]
-      },
-      "restoreAuditProperties": {
-        "enableAudit": "true",
-        "auditLevel": "low",
-        "auditMode": "direct"
       }
     },
     "frameworks": {
@@ -5200,7 +5195,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/8.0.405/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "/usr/lib/dotnet/sdk/8.0.112/PortableRuntimeIdentifierGraph.json"
       }
     }
   }

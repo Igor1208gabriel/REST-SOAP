@@ -9,6 +9,49 @@
   "basePath": "/",
   "schemes": ["http"],
   "paths": {
+    "/login": {
+      "post": {
+        "summary": "Realiza login do usuário admin",
+        "tags": ["autenticacao"],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "username": { "type": "string" },
+                "password": { "type": "string" }
+              },
+              "required": ["username", "password"]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Login realizado com sucesso"
+          },
+          "401": {
+            "description": "Credenciais inválidas"
+          }
+        }
+      }
+    },
+    "/logout": {
+      "post": {
+        "summary": "Realiza logout do usuário autenticado",
+        "tags": ["autenticacao"],
+        "responses": {
+          "200": {
+            "description": "Logout realizado com sucesso"
+          },
+          "500": {
+            "description": "Erro ao realizar logout"
+          }
+        }
+      }
+    },
     "/users": {
       "get": {
         "summary": "Retorna a lista de usuários",
@@ -162,7 +205,7 @@
     "/auth": {
       "post": {
         "summary": "Autentica um usuário na API SOAP",
-        "tags":[ "autenticacao"],
+        "tags": ["autenticacao"],
         "parameters": [
           {
             "name": "body",
@@ -173,7 +216,8 @@
               "properties": {
                 "username": { "type": "string" },
                 "password": { "type": "string" }
-              }
+              },
+              "required": ["username", "password"]
             }
           }
         ],
@@ -185,17 +229,20 @@
       }
     }
   },
-  "definitions": {
-    "User": {
-      "type": "object",
-      "properties": {
-        "id": { "type": "integer" },
-        "username": { "type": "string" },
-        "email": { "type": "string" },
-        "first_name": { "type": "string" },
-        "last_name": { "type": "string" }
+"definitions": {
+  "User": {
+    "type": "object",
+    "properties": {
+      "id": { 
+        "type": "integer",
+        "readOnly": true
       },
-      "required": ["username", "email"]
-    }
+      "name": { "type": "string" },
+      "email": { "type": "string" },
+      "password": { "type": "string" }
+    },
+    "required": ["name", "email", "password"]
   }
+}
+
 }
