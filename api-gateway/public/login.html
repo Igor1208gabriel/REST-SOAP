@@ -56,8 +56,8 @@
     <h2>Login</h2>
     <div id="error" class="error-message"></div>
     <form id="loginForm">
-      <!-- Lembre-se: o campo 'username' deverá conter o email para autenticação -->
-      <input type="text" id="username" placeholder="Email" required>
+      <!-- Lembre-se: o campo 'email' deverá conter o email para autenticação -->
+      <input type="text" id="email" placeholder="Email" required>
       <input type="password" id="password" placeholder="Senha" required>
       <button type="submit">Entrar</button>
     </form>
@@ -65,7 +65,7 @@
   <script>
     document.getElementById("loginForm").addEventListener("submit", async function(e) {
       e.preventDefault();
-      const username = document.getElementById("username").value;
+      const email = document.getElementById("email").value;
       const password = document.getElementById("password").value;
       try {
         const response = await fetch("http://localhost:3000/login", {
@@ -73,7 +73,7 @@
           headers: {
             "Content-Type": "application/json"
           },
-          body: JSON.stringify({ username, password })
+          body: JSON.stringify({ email, password })
         });
         if (response.ok) {
           // Login bem-sucedido: redireciona para a home

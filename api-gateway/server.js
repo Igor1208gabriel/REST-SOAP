@@ -49,7 +49,7 @@ function isAuthenticated(req, res, next) {
 
 // Rota unificada de login que utiliza a autenticação SOAP
 app.post("/login", async (req, res) => {
-  const { username, password } = req.body;
+  const { email, password } = req.body;
   
   // Monta o envelope SOAP com os dados recebidos
   const xml = `
@@ -58,7 +58,7 @@ app.post("/login", async (req, res) => {
       <soapenv:Header/>
       <soapenv:Body>
         <web:Authenticate>
-          <web:username>${username}</web:username>
+          <web:email>${email}</web:email>
           <web:password>${password}</web:password>
         </web:Authenticate>
       </soapenv:Body>
@@ -69,7 +69,7 @@ app.post("/login", async (req, res) => {
     console.log("Resposta SOAP:", response.body);
     
     // Se a resposta contiver a mensagem de sucesso, loga o usuário
-    if (response.body.includes("Autenticado com sucesso!") || (username === "admin" && password === "123")) {
+    if (response.body.includes("Autenticado com sucesso!") || (email === "admin" && password === "123")) {
       req.session.loggedIn = true;
       res.json({ message: "Login realizado com sucesso!" });
     } else {

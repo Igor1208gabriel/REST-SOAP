@@ -106,7 +106,7 @@ Se não tiver, bora instalar esses musos da tecnologia!
   👉 `POST http://localhost:3000/auth` com o corpo:
    ```json
    {
-      "username": "barbie",
+      "email": "barbie",
       "password": "ken"
    }
    ```

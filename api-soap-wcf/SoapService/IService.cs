@@ -5,5 +5,5 @@ using System.Threading.Tasks;
 public interface IService
 {
     [OperationContract]
-    Task<string> Authenticate(string username, string password);
+    Task<string> Authenticate(string email, string password);
 }
