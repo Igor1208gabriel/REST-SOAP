@@ -47,14 +47,36 @@ function isAuthenticated(req, res, next) {
   }
 }
 
-// Rota de login para o usuário admin padrão (admin/123)
-app.post("/login", (req, res) => {
+// Rota unificada de login que utiliza a autenticação SOAP
+app.post("/login", async (req, res) => {
   const { username, password } = req.body;
-  if (username === "admin" && password === "123") {
-    req.session.loggedIn = true;
-    res.json({ message: "Login realizado com sucesso!" });
-  } else {
-    res.status(401).json({ error: "Credenciais inválidas." });
+  
+  // Monta o envelope SOAP com os dados recebidos
+  const xml = `
+    <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+                      xmlns:web="http://tempuri.org/">
+      <soapenv:Header/>
+      <soapenv:Body>
+        <web:Authenticate>
+          <web:username>${username}</web:username>
+          <web:password>${password}</web:password>
+        </web:Authenticate>
+      </soapenv:Body>
+    </soapenv:Envelope>`;
+  const headers = { "Content-Type": "text/xml" };
+  try {
+    const { response } = await soapRequest({ url: SOAP_API_URL, headers, xml });
+    console.log("Resposta SOAP:", response.body);
+    
+    // Se a resposta contiver a mensagem de sucesso, loga o usuário
+    if (response.body.includes("Autenticado com sucesso!") || (username === "admin" && password === "123")) {
+      req.session.loggedIn = true;
+      res.json({ message: "Login realizado com sucesso!" });
+    } else {
+      res.status(401).json({ error: "Credenciais inválidas." });
+    }
+  } catch (error) {
+    res.status(500).json({ error: "Erro ao autenticar usuário" });
   }
 });
 
@@ -158,32 +180,6 @@ app.delete("/users/:id", async (req, res) => {
     res
       .status(500)
       .json({ error: `Erro ao excluir o usuário com ID ${req.params.id}` });
-  }
-});
-
-// ----------------------
-// Rota para a API SOAP
-// ----------------------
-// Essa rota converte a requisição REST em SOAP para autenticação
-app.post("/auth", async (req, res) => {
-  const { username, password } = req.body;
-  const xml = `
-    <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
-                      xmlns:web="http://tempuri.org/">
-      <soapenv:Header/>
-      <soapenv:Body>
-        <web:Authenticate>
-          <web:username>${username}</web:username>
-          <web:password>${password}</web:password>
-        </web:Authenticate>
-      </soapenv:Body>
-    </soapenv:Envelope>`;
-  const headers = { "Content-Type": "text/xml" };
-  try {
-    const { response } = await soapRequest({ url: SOAP_API_URL, headers, xml });
-    res.send(response.body);
-  } catch (error) {
-    res.status(500).json({ error: "Erro ao autenticar usuário" });
   }
 });
 
