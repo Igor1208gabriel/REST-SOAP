@@ -2,116 +2,98 @@
 
 ![diva](diva.webp)
 
-💖 Se joga nessa aventura tecnológica cheia de REST, SOAP e muita integração! Aqui, temos um API Gateway chiquérrimo que conecta tudo com muito glamour! 💃🎉
-
-🎭 O que temos por aqui?
-
-💅 API Gateway divando com Node.js
-
-💖 API REST poderosa rodando no Django
-
-💃 API SOAP glamourosa via WCF
-
-🌟 HATEOAS trazendo links porque amamos conexão!
-
-🎀 Documentação via Swagger pra ficar tudo clarinho!
-
-🎩 Como instalar esse espetáculo?
-
-Clone o repositório: git clone https://github.com/rest-soap.git
-
-Entre na pasta: cd api-gateway-fabuloso
-
-Instale as dependências: npm install
-
-Dê o start no show: npm start
-
-Agora vamos garantir que você consiga rodar o sistema completo sem nenhum perrengue! Aqui estão as instruções de ouro para deixar tudo funcionando com muito brilho! ✨💖
+💖 Se joga nessa aventura tecnológica repleta de REST, SOAP e integração arrasadora! Aqui, nosso API Gateway chiquérrimo conecta todas as partes com um glamour inigualável – e o melhor de tudo: agora, TUDO está containerizado! Nada de rodar cada serviço separadamente, miga, é Docker, é Docker, é Docker! 💃🎉
 
 ---
 
-## 🎭 Como rodar TUDO: API Gateway, REST e SOAP! 💃
+## 🎭 O que temos por aqui?
+
+- **API Gateway arrasando com Node.js**
+- **API REST poderosa rodando no Django**
+- **API SOAP glamourosa via WCF**
+- **HATEOAS esbanjando links porque a conexão é diva!**
+- **Documentação via Swagger pra deixar tudo claríssimo!**
+- **E o melhor:** Todo o sistema containerizado para você não perder tempo e arrasar sempre!
+
+---
+
+## 🎀 Como rodar TUDO (com Docker) e brilhar sem perrengues!
 
 ### 🔥 1. Preparando o ambiente
-Antes de tudo, certifique-se de que tem instalados:
-- **Node.js** (para o API Gateway)
-- **Python + Django** (para a API REST)
-- **.NET Core SDK** (para a API SOAP)
+Antes de mais nada, certifique-se de ter instalados:
+- **Docker** e **Docker Compose**
 
-Se não tiver, bora instalar esses musos da tecnologia!
+Sem esses, não tem como entrar na onda dessa tecnologia fabulosa!
 
 ---
 
-### 🚀 2. Rodando a API REST (Django)
-1. Entre na pasta da API REST:
-   ```sh
-   cd api-rest
-   ```
-2. Crie um ambiente virtual e ative (opcional, mas recomendado):
-   ```sh
-   python -m venv venv
-   source venv/bin/activate  # Linux/macOS
-   venv\Scripts\activate     # Windows
-   ```
-3. Instale as dependências:
-   ```sh
-   pip install -r requirements.txt
-   ```
-4. Aplique as migrações e rode o servidor:
-   ```sh
-   python manage.py migrate
-   python manage.py runserver
-   ```
-   📌 **A API REST estará rodando em:** [http://127.0.0.1:8000](http://127.0.0.1:8000)
+### 🚀 2. Subindo o show completo com Docker
+Na raiz do repositório (onde estão as pastas `api-rest`, `api-soap-wcf` e `api-gateway`), basta rodar:
+
+```sh
+docker-compose up --build
+```
+
+E pronto!  
+- A **API REST (Django)** subiu lindamente em [http://localhost:8000](http://localhost:8000)
+- A **API SOAP (WCF)** está um arraso em [http://localhost:5000/Service.svc](http://localhost:5000/Service.svc)
+- O **API Gateway (Node.js)** tá poderosíssimo em [http://localhost:3000](http://localhost:3000)
+- E o **Redis** (para a fila de mensagens) também tá no rolê, sustentando toda a magia!
+
+Esqueça a bagunça de instalar dependências e rodar comandos separadamente – agora é só subir os containers e deixar a tecnologia trabalhar por você, com muito brilho e sem stress! ✨💖
 
 ---
 
-### 💅 3. Rodando a API SOAP (WCF)
-1. Entre na pasta do projeto SOAP:
-   ```sh
-   cd api-soap-wcf/SoapService
-   ```
-2. Compile e rode o servidor:
-   ```sh
-   dotnet build
-   dotnet run
-   ```
-   📌 **A API SOAP estará disponível em:** [http://localhost:5000/Service.svc](http://localhost:5000/Service.svc)
+### 3. Fila de mensagens *-*
 
----
+```js
 
-### 🌟 4. Rodando o API Gateway (Node.js)
-1. Entre na pasta do Gateway:
-   ```sh
-   cd api-gateway
-   ```
-2. Instale as dependências:
-   ```sh
-   npm install
-   ```
-3. Inicie o Gateway:
-   ```sh
-   npm start
-   ```
-   📌 **O API Gateway estará acessível em:** [http://localhost:3000](http://localhost:3000)
+// Rota de logout
+app.post("/logout", (req, res) => {
+  req.session.destroy((err) => {
+    if (err) {
+      res.status(500).json({ error: "Erro ao realizar logout." });
+    } else {
+      res.json({ message: "Logout realizado com sucesso!" });
+    }
+  });
+});
 
----
+// Rota de autenticação via SOAP usando fila
+app.post("/auth", async (req, res) => {
+  const { email, password } = req.body;
+  const job = await authQueue.add({ email, password });
+  job.finished()
+    .then((result) => res.send(result))
+    .catch(() => res.status(500).json({ error: "Erro ao autenticar usuário" }));
+});
 
-### 🎀 5. Testando tudo!
-- 🌍 **Acesse o Swagger para ver a documentação da API:**  
-  👉 [http://localhost:3000/api-docs](http://localhost:3000/api-docs)
+```
+
+### 💅 4. Testando o espetáculo!
+
+- 🌍 **Documentação via Swagger:**  
+  Encante-se com [http://localhost:3000/api-docs](http://localhost:3000/api-docs) – tudo documentado com muito glamour!
+
 - 🔥 **Testar a API REST:**  
-  👉 `GET http://localhost:3000/users`
+  Experimente o `GET http://localhost:3000/users` e veja os usuários arrasando com links HATEOAS que brilham mais que glitter!
+
 - 💖 **Autenticação via API SOAP:**  
-  👉 `POST http://localhost:3000/auth` com o corpo:
+  Faça um `POST http://localhost:3000/auth` com o corpo:
    ```json
    {
       "email": "barbie",
       "password": "ken"
    }
    ```
+  Sinta a energia de um login super poderoso que ainda dispara notificações com estilo!
 
 ---
 
-## 🎉 Agora é só brilhar! ✨
-Você tem um sistema COMPLETO rodando com REST, SOAP e um API Gateway fabuloso! Se tiver dúvidas, joga no Google ou chama as amigas devs! 🚀💖
+## 🎉 Agora é só brilhar, diva!
+
+Você tem um sistema COMPLETO, containerizado e integradíssimo, rodando com REST, SOAP e um API Gateway que é pura elegância! Esqueça as complicações – aqui a tecnologia foi feita para facilitar sua vida e fazer você brilhar! Se tiver dúvidas, chama as amigas devs ou dá aquele Google maroto – aqui a gente sempre arrasa junto! 🚀💖
+
+---
+
+Agora, prepare-se para se apaixonar por essa obra-prima da integração tecnológica – porque, no nosso mundo, cada linha de código é um desfile de moda digital! 🌈✨

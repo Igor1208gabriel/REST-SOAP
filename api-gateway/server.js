@@ -77,7 +77,7 @@ function isAuthenticated(req, res, next) {
 // Rota de login
 app.post("/login", (req, res) => {
   const { email, password } = req.body;
-  if (email === "admin" && password === "123") {
+  if (email === "barbie" && password === "ken") {
     req.session.loggedIn = true;
     res.json({ message: "Login realizado com sucesso!" });
   } else {
@@ -88,7 +88,7 @@ app.post("/login", (req, res) => {
 // Rota de logout
 app.post("/logout", (req, res) => {
   req.session.destroy((err) => {
-    if (err) {
+    if (err) {  
       res.status(500).json({ error: "Erro ao realizar logout." });
     } else {
       res.json({ message: "Logout realizado com sucesso!" });
