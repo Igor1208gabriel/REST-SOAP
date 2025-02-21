@@ -7,51 +7,16 @@ const swaggerUi = require("swagger-ui-express");
 const swaggerDocument = require("./swagger.json");
 const session = require("express-session");
 const cors = require("cors");
+const Bull = require("bull");
 
 const app = express();
 
-// Middlewares básicos
-app.use(express.json());
-app.use(hateoasLinker);
-app.use(cors());
+// Fila de mensagens
+const authQueue = new Bull("authQueue");
 
-// Configuração de sessão (para autenticação)
-app.use(
-  session({
-    secret: "mySecret", // Utilize um segredo mais seguro em produção
-    resave: false,
-    saveUninitialized: false,
-  })
-);
-
-// Configuração dos arquivos estáticos (HTML, CSS, JS) na pasta "public"
-app.use(express.static(path.join(__dirname, "public")));
-
-// Rota raiz: direciona para a página de login
-app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "login.html"));
-});
-
-// Configuração do Swagger para documentar a API
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
-
-const REST_API_URL = "http://127.0.0.1:8000/api/";
-const SOAP_API_URL = "http://localhost:5000/Service.svc?wsdl";
-
-// Middleware para proteger as rotas que exigem autenticação
-function isAuthenticated(req, res, next) {
-  if (req.session && req.session.loggedIn) {
-    next();
-  } else {
-    res.status(401).json({ error: "Acesso negado. Por favor, faça login." });
-  }
-}
-
-// Rota unificada de login que utiliza a autenticação SOAP
-app.post("/login", async (req, res) => {
-  const { email, password } = req.body;
-  
-  // Monta o envelope SOAP com os dados recebidos
+// Processador da fila
+authQueue.process(async (job) => {
+  const { email, password } = job.data;
   const xml = `
     <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
                       xmlns:web="http://tempuri.org/">
@@ -66,17 +31,57 @@ app.post("/login", async (req, res) => {
   const headers = { "Content-Type": "text/xml" };
   try {
     const { response } = await soapRequest({ url: SOAP_API_URL, headers, xml });
-    console.log("Resposta SOAP:", response.body);
-    
-    // Se a resposta contiver a mensagem de sucesso, loga o usuário
-    if (response.body.includes("Autenticado com sucesso!") || (email === "admin" && password === "123")) {
-      req.session.loggedIn = true;
-      res.json({ message: "Login realizado com sucesso!" });
-    } else {
-      res.status(401).json({ error: "Credenciais inválidas." });
-    }
+    return response.body;
   } catch (error) {
-    res.status(500).json({ error: "Erro ao autenticar usuário" });
+    throw new Error("Erro ao autenticar usuário");
+  }
+});
+
+// Middlewares básicos
+app.use(express.json());
+app.use(hateoasLinker);
+app.use(cors());
+
+// Configuração de sessão
+app.use(
+  session({
+    secret: "mySecret",
+    resave: false,
+    saveUninitialized: false,
+  })
+);
+
+// Configuração dos arquivos estáticos
+app.use(express.static(path.join(__dirname, "public")));
+
+// Rota raiz
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "login.html"));
+});
+
+// Swagger
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
+const REST_API_URL = "http://127.0.0.1:8000/api/";
+const SOAP_API_URL = "http://localhost:5000/Service.svc?wsdl";
+
+// Middleware de autenticação
+function isAuthenticated(req, res, next) {
+  if (req.session && req.session.loggedIn) {
+    next();
+  } else {
+    res.status(401).json({ error: "Acesso negado. Por favor, faça login." });
+  }
+}
+
+// Rota de login
+app.post("/login", (req, res) => {
+  const { email, password } = req.body;
+  if (email === "admin" && password === "123") {
+    req.session.loggedIn = true;
+    res.json({ message: "Login realizado com sucesso!" });
+  } else {
+    res.status(401).json({ error: "Credenciais inválidas." });
   }
 });
 
@@ -91,14 +96,16 @@ app.post("/logout", (req, res) => {
   });
 });
 
-// Protege as rotas de CRUD de usuários
-app.use("/users", isAuthenticated);
+// Rota de autenticação via SOAP usando fila
+app.post("/auth", async (req, res) => {
+  const { email, password } = req.body;
+  const job = await authQueue.add({ email, password });
+  job.finished()
+    .then((result) => res.send(result))
+    .catch(() => res.status(500).json({ error: "Erro ao autenticar usuário" }));
+});
 
-// ----------------------
-// Rotas para a API REST
-// ----------------------
-
-// GET /users - Lista todos os usuários com links HATEOAS
+// Rota para obter usuários com HATEOAS
 app.get("/users", async (req, res) => {
   try {
     const response = await axios.get(`${REST_API_URL}users/`);
@@ -184,4 +191,6 @@ app.delete("/users/:id", async (req, res) => {
 });
 
 // Inicializa o servidor na porta 3000
+
+// Inicializa o servidor
 app.listen(3000, () => console.log("API Gateway rodando na porta 3000"));
