@@ -44,31 +44,56 @@ Esqueça a bagunça de instalar dependências e rodar comandos separadamente –
 
 ---
 
-### 3. Fila de mensagens *-*
+### 3. Fila de mensagens: Gerenciamento de Fila de E-mails em C# *-*
 
-```js
+Este projeto implementa uma fila de e-mails para envio assíncrono de notificações, utilizando ConcurrentQueue, AutoResetEvent e HttpClient.
 
-// Rota de logout
-app.post("/logout", (req, res) => {
-  req.session.destroy((err) => {
-    if (err) {
-      res.status(500).json({ error: "Erro ao realizar logout." });
-    } else {
-      res.json({ message: "Logout realizado com sucesso!" });
-    }
-  });
-});
+📌 Visão Geral
 
-// Rota de autenticação via SOAP usando fila
-app.post("/auth", async (req, res) => {
-  const { email, password } = req.body;
-  const job = await authQueue.add({ email, password });
-  job.finished()
-    .then((result) => res.send(result))
-    .catch(() => res.status(500).json({ error: "Erro ao autenticar usuário" }));
-});
+O serviço gerencia uma fila de e-mails que são processados em segundo plano para evitar bloqueios na thread principal.
 
-```
+Autenticação: O método Authenticate consulta um usuário na API e, se autenticado, enfileira um e-mail de notificação.
+
+Fila de E-mails: Utiliza ConcurrentQueue<EmailMessage> para armazenar e-mails a serem enviados.
+
+Processamento Assíncrono: A fila é monitorada por uma thread de background que envia os e-mails um a um.
+
+🛠️ Como Funciona
+
+O usuário realiza login através do método Authenticate(email, password).
+
+Se a autenticação for bem-sucedida, um e-mail de notificação é enfileirado através de EnqueueEmail().
+
+A fila é monitorada pelo método ProcessQueue(), que processa os e-mails em background.
+
+O método SendEmail() envia os e-mails utilizando SmtpClient e um servidor SMTP do Gmail.
+
+📜 Explicação dos Componentes
+
+🔹 Fila de E-mails (ConcurrentQueue<EmailMessage>)
+
+Implementada para permitir múltiplas threads adicionarem e processarem e-mails sem necessidade de bloqueios explícitos.
+
+A fila armazena objetos EmailMessage contendo destinatário, assunto e corpo da mensagem.
+
+🔹 Sinalizador de Processamento (AutoResetEvent)
+
+queueNotifier é utilizado para sinalizar quando há novos e-mails na fila.
+
+Se a fila está vazia, a thread de processamento fica em espera até um novo e-mail ser adicionado.
+
+🔹 Processamento Assíncrono (Task.Run(ProcessQueue))
+
+Ao iniciar a aplicação, um processo de background é iniciado para monitorar a fila.
+
+O processamento continua até que a fila fique vazia.
+
+🔹 Envio de E-mails (SmtpClient)
+
+Os e-mails são enviados via SmtpClient, utilizando SMTP do Gmail.
+
+O remetente e a senha são configurados para autenticação no servidor SMTP.
+
 
 ### 💅 4. Testando o espetáculo!
 
